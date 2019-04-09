@@ -1,0 +1,44 @@
+<script>
+  var clientSocket = new WebSocket('https://m152webchat.herokuapp.com/chat');
+  clientSocket.onopen = function (event) {
+    clientSocket.send("Listening! " + navigator.vendor)
+  };
+  clientSocket.onmessage = function (event) {
+    try {
+      let answer = JSON.parse(event.data);
+      document.querySelector(".messages").innerHTML =
+        document.querySelector(".messages").innerHTML + `<br> <b>${answer.username}:</b> ${answer.message}`;
+      document.querySelector("textarea").value = "";
+      document.querySelector("input").value = "";
+    } catch (e) {
+      console.log("Caught it!");
+    }
+    console.log(event.data);
+  };
+  document.querySelector("#submitButton")
+    .addEventListener('click', function () {
+      console.log("Hey!");
+      clientSocket.send(JSON.stringify(
+        {
+          message: document.querySelector("textarea").value,
+          username: document.querySelector("input").value
+        }
+      ));
+    });
+</script>
+
+<form>
+  <div>
+    <label for="">Benutzername</label>
+    <input type="text" placeholder="Benutzername">
+  </div>
+  <div>
+    <label for="">Message</label>
+    <textarea name="" id="" placeholder="Platzhalter"></textarea>
+  </div>
+  <button type="button" id="submitButton">Absenden</button>
+</form>
+
+<div class="messages">
+
+</div>
